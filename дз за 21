@@ -1,0 +1,68 @@
+import os
+import sys
+import platform
+
+# несколько переменных
+system_name = platform.system()
+system_version = platform.version()
+computer_name = platform.node()
+processor = platform.processor()
+current_folder = os.getcwd()
+
+# список для хранения результатов
+info = [
+    system_name,
+    system_version,
+    computer_name,
+    processor,
+    current_folder
+]
+
+# меню
+menu = """
+1 - Название операционной системы
+2 - Версия операционной системы
+3 - Имя компьютера
+4 - Процессор
+5 - Текущая папка
+6 - Показать всю информацию
+0 - Выход
+
+Введите номер: 
+"""
+
+while True:
+    sys.stdout.write(menu)
+    sys.stdout.flush()
+
+    choice = sys.stdin.readline().strip()
+
+    if choice == "1":
+        sys.stdout.write("ОС: " + info[0] + "\n")
+
+    elif choice == "2":
+        sys.stdout.write("Версия ОС: " + info[1] + "\n")
+
+    elif choice == "3":
+        sys.stdout.write("Имя компьютера: " + info[2] + "\n")
+
+    elif choice == "4":
+        sys.stdout.write("Процессор: " + info[3] + "\n")
+
+    elif choice == "5":
+        sys.stdout.write("Текущая папка: " + info[4] + "\n")
+
+    elif choice == "6":
+        sys.stdout.write("\nИнформация о системе:\n")
+        sys.stdout.write("ОС: " + info[0] + "\n")
+        sys.stdout.write("Версия ОС: " + info[1] + "\n")
+        sys.stdout.write("Имя компьютера: " + info[2] + "\n")
+        sys.stdout.write("Процессор: " + info[3] + "\n")
+        sys.stdout.write("Текущая папка: " + info[4] + "\n")
+
+    elif choice == "0":
+        sys.stdout.write("Программа завершена.\n")
+        break
+
+    else:
+        sys.stdout.write("Такого пункта нет.\n")
