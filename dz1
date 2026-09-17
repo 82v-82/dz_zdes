@@ -1,0 +1,118 @@
+import json
+
+FILE_NAME = "tasks.json"
+
+
+def load_tasks():
+    try:
+        with open(FILE_NAME, "r", encoding="utf-8") as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return []
+
+
+def save_tasks(tasks):
+    with open(FILE_NAME, "w", encoding="utf-8") as file:
+        json.dump(tasks, file, ensure_ascii=False, indent=4)
+
+
+def show_tasks(tasks):
+    if len(tasks) == 0:
+        print("\nСписок задач пуст.")
+    else:
+        print("\nВаши задачи:")
+        for i, task in enumerate(tasks, 1):
+            print(f"{i}. {task}")
+
+
+def add_task(tasks):
+    task = input("Введите название задачи: ")
+
+    if task:
+        tasks.append(task)
+        save_tasks(tasks)
+        print("Задача добавлена.")
+    else:
+        print("Название задачи не может быть пустым.")
+
+
+def edit_task(tasks):
+    show_tasks(tasks)
+
+    if len(tasks) == 0:
+        return
+
+    try:
+        number = int(input("Введите номер задачи: "))
+
+        if number >= 1 and number <= len(tasks):
+            new_name = input("Введите новое название: ")
+
+            if new_name:
+                tasks[number - 1] = new_name
+                save_tasks(tasks)
+                print("Задача изменена.")
+            else:
+                print("Название не может быть пустым.")
+        else:
+            print("Такой задачи нет.")
+
+    except ValueError:
+        print("Введите номер числом.")
+
+
+def delete_task(tasks):
+    show_tasks(tasks)
+
+    if len(tasks) == 0:
+        return
+
+    try:
+        number = int(input("Введите номер задачи: "))
+
+        if number >= 1 and number <= len(tasks):
+            tasks.pop(number - 1)
+            save_tasks(tasks)
+            print("Задача удалена.")
+        else:
+            print("Такой задачи нет.")
+
+    except ValueError:
+        print("Введите номер числом.")
+
+
+def main():
+    tasks = load_tasks()
+
+    while True:
+        print("\n====== СПИСОК ЗАДАЧ ======")
+        print("1. Показать задачи")
+        print("2. Добавить задачу")
+        print("3. Изменить задачу")
+        print("4. Удалить задачу")
+        print("5. Выход")
+        print("==========================")
+
+        choice = input("Выберите действие: ")
+
+        if choice == "1":
+            show_tasks(tasks)
+
+        elif choice == "2":
+            add_task(tasks)
+
+        elif choice == "3":
+            edit_task(tasks)
+
+        elif choice == "4":
+            delete_task(tasks)
+
+        elif choice == "5":
+            print("Программа завершена.")
+            break
+
+        else:
+            print("Неверный пункт меню.")
+
+
+main()
