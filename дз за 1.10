@@ -1,0 +1,118 @@
+collection = []
+
+
+def add_task():
+    task = input("Введите задачу: ")
+    collection.append(task)
+    print("Задача добавлена")
+
+
+def show_tasks():
+    if len(collection) == 0:
+        print("Список задач пуст")
+    else:
+        print("\nСписок задач:")
+        for i in range(len(collection)):
+            print(i + 1, "-", collection[i])
+
+
+# case-3
+def edited_task():
+    show_tasks()
+
+    if len(collection) == 0:
+        return
+
+    number = int(input("Введите номер задачи для изменения: "))
+
+    if number > 0 and number <= len(collection):
+        new_task = input("Введите новую задачу: ")
+        collection[number - 1] = new_task
+        print("Задача изменена")
+    else:
+        print("Такой задачи нет")
+
+
+# case-4
+def deleted_task():
+    show_tasks()
+
+    if len(collection) == 0:
+        return
+
+    number = int(input("Введите номер задачи для удаления: "))
+
+    if number > 0 and number <= len(collection):
+        collection.pop(number - 1)
+        print("Задача удалена")
+    else:
+        print("Такой задачи нет")
+
+
+def save_tasks():
+    file = open("tasks.txt", "w", encoding="utf-8")
+
+    for task in collection:
+        file.write(task + "\n")
+
+    file.close()
+    print("Задачи сохранены")
+
+
+def load_tasks():
+    file = open("tasks.txt", "r", encoding="utf-8")
+
+    collection.clear()
+
+    for line in file:
+        task = line.strip()
+
+        if task != "":
+            collection.append(task)
+
+    file.close()
+
+    print("\nЗагруженные задачи:")
+    show_tasks()
+
+
+def main():
+    load_tasks()
+
+    while True:
+        print("\n--- TASK MANAGER ---")
+        print("1 - Добавить задачу")
+        print("2 - Показать задачи")
+        print("3 - Изменить задачу")
+        print("4 - Удалить задачу")
+        print("5 - Сохранить задачи")
+        print("0 - Выход")
+
+        choice = input("Выберите действие: ")
+
+        match choice:
+            case "1":
+                add_task()
+
+            case "2":
+                show_tasks()
+
+            case "3":
+                edited_task()
+
+            case "4":
+                deleted_task()
+
+            case "5":
+                save_tasks()
+
+            case "0":
+                save_tasks()
+                print("Программа завершена")
+                break
+
+            case _:
+                print("Неверный выбор")
+
+
+main()
