@@ -1,0 +1,200 @@
+# ДЗ за 08.10 — ревью Task Manager
+
+## BUGFIX
+
+### 0.0.9
+- Исправлено падение программы при отсутствии файла tasks.txt.
+- Добавлена безопасная загрузка задач.
+- Исправлено сохранение задач через with open.
+
+### 0.1.0
+- Исправлена обработка неверного номера задачи.
+- Добавлена проверка пустой задачи.
+- Добавлено подтверждение удаления.
+- Исправлена обработка неверного выбора меню.
+- Сохранение выполняется перед выходом.
+- Код разделён на понятные функции.
+- Убраны необработанные ошибки пользовательского ввода.
+
+## BACKLOG
+
+### 0.0.1
+- Создание списка задач.
+- Добавление задачи.
+
+### 0.0.2
+- Просмотр списка задач.
+
+### 0.0.3
+- Изменение задачи.
+
+### 0.0.4
+- Удаление задачи.
+
+### 0.0.5
+- Добавлено меню приложения.
+- Добавлен выход из программы.
+
+### 0.0.6
+- Добавлено сохранение задач в tasks.txt.
+
+### 0.0.7
+- Добавлена загрузка задач из tasks.txt.
+
+### 0.0.8
+- Исправлена работа с пустым списком.
+- Улучшена обработка выбора пользователя.
+
+### 0.0.9
+- Исправлена ошибка при отсутствии tasks.txt.
+- Улучшена обработка пользовательского ввода.
+
+### 0.1.0
+- Добавлена проверка подтверждения удаления.
+- Исправлены ошибки редактирования и удаления.
+- Добавлена проверка пустых задач.
+- Улучшена структура приложения.
+- Добавлено корректное сохранение при выходе.
+
+## main.py
+
+"""Task Manager 0.1.0.
+Приложение позволяет создавать, просматривать, изменять и удалять задачи,
+а также сохранять и загружать их из файла tasks.txt.
+"""
+
+FILE_NAME = "tasks.txt"
+
+
+def check_confirm(message="Подтвердить действие? [y/n]: "):
+    while True:
+        answer = input(message).strip().lower()
+        if answer in ("y", "yes", "д", "да"):
+            return True
+        if answer in ("n", "no", "н", "нет"):
+            return False
+        print("Введите y/д или n/н.")
+
+
+def load_tasks():
+    try:
+        with open(FILE_NAME, "r", encoding="utf-8") as file:
+            return [line.strip() for line in file if line.strip()]
+    except FileNotFoundError:
+        return []
+
+
+def save_tasks(tasks):
+    with open(FILE_NAME, "w", encoding="utf-8") as file:
+        for task in tasks:
+            file.write(task + "\n")
+
+
+def show_tasks(tasks):
+    if not tasks:
+        print("Список задач пуст.")
+        return
+
+    print("\nСписок задач:")
+    for number, task in enumerate(tasks, 1):
+        print(f"{number} - {task}")
+
+
+def create_task(tasks):
+    task = input("Введите задачу: ").strip()
+
+    if not task:
+        print("Задача не может быть пустой.")
+        return
+
+    tasks.append(task)
+    print("Задача добавлена.")
+
+
+def get_task_number(tasks, message):
+    try:
+        number = int(input(message))
+    except ValueError:
+        print("Нужно ввести число.")
+        return None
+
+    if not 1 <= number <= len(tasks):
+        print("Такой задачи нет.")
+        return None
+
+    return number
+
+
+def edit_task(tasks):
+    if not tasks:
+        print("Список задач пуст.")
+        return
+
+    number = get_task_number(tasks, "Введите номер задачи для изменения: ")
+
+    if number is None:
+        return
+
+    new_task = input("Введите новую задачу: ").strip()
+
+    if not new_task:
+        print("Задача не может быть пустой.")
+        return
+
+    tasks[number - 1] = new_task
+    print("Задача изменена.")
+
+
+def delete_task(tasks):
+    if not tasks:
+        print("Список задач пуст.")
+        return
+
+    number = get_task_number(tasks, "Введите номер задачи для удаления: ")
+
+    if number is None:
+        return
+
+    if check_confirm(f"Удалить задачу «{tasks[number - 1]}»? [y/n]: "):
+        tasks.pop(number - 1)
+        print("Задача удалена.")
+    else:
+        print("Удаление отменено.")
+
+
+def main():
+    tasks = load_tasks()
+
+    while True:
+        print("\n--- TASK MANAGER v0.1.0 ---")
+        print("1 - Добавить задачу")
+        print("2 - Показать задачи")
+        print("3 - Изменить задачу")
+        print("4 - Удалить задачу")
+        print("5 - Сохранить задачи")
+        print("0 - Выход")
+
+        choice = input("Выберите действие: ").strip()
+
+        match choice:
+            case "1":
+                create_task(tasks)
+            case "2":
+                show_tasks(tasks)
+            case "3":
+                edit_task(tasks)
+            case "4":
+                delete_task(tasks)
+            case "5":
+                save_tasks(tasks)
+                print("Задачи сохранены.")
+            case "0":
+                save_tasks(tasks)
+                print("Программа завершена.")
+                break
+            case _:
+                print("Неверный выбор.")
+
+
+if __name__ == "__main__":
+    main()
