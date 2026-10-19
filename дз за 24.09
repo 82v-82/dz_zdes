@@ -1,0 +1,36 @@
+# main.py
+
+def show_message(action: str, success: bool, details: str = "") -> None:
+    """Информирует пользователя о результатах операций."""
+    status = "Успешно" if success else "Ошибка"
+    msg = f"[{status}] {action}"
+    if details:
+        msg += f": {details}"
+    print(msg)
+
+
+def show_collection(items: list, title: str = "Список элементов") -> None:
+    """Форматированно выводит список в консоль."""
+    print(f"\n--- {title} ---")
+    if not items:
+        print("Список пуст.")
+        return
+    for idx, item in enumerate(items, start=1):
+        print(f"{idx}. {item}")
+    print("--------------\n")
+
+
+# Пример тестирования функционала
+if __name__ == "__main__":
+    notes = ["Купить молоко", "Позвонить маме", "Сдать ДЗ"]
+    
+    # Тестирование show_collection
+    show_collection(notes, "Текущие заметки")
+    
+    # Тестирование show_message (успешные операции)
+    show_message("Добавление заметки", True, "Заметка 'Сдать ДЗ' добавлена")
+    show_message("Редактирование заметки", True, "Заметка 'Позвонить маме' обновлена")
+    
+    # Тестирование show_message (ошибки)
+    show_message("Удаление заметки", False, "Заметка не найдена")
+    show_message("Сохранение данных", False, "Ошибка записи в файл")
