@@ -1,0 +1,107 @@
+import tkinter as tk
+
+# Создаем главное окно
+root = tk.Tk()
+root.title("Калькулятор - Урок 9")
+root.geometry("320x420")
+
+# Переменные для хранения состояния калькулятора
+# Требование п.6: сохраняем результат ввода и вывода
+current_expression = ""   # То, что вводит пользователь (строка)
+final_result = "0"        # Сохраненный результат вычислений
+
+# --- Пункт 4: Создаем text_input для вывода чисел и знаков ---
+text_input = tk.Label(root, text="0", bg="white", fg="black", font=("Arial", 24), anchor="e", padx=10, pady=10)
+text_input.pack(fill="x", padx=10, pady=10)
+
+# Контейнер для кнопок
+buttons_frame = tk.Frame(root)
+buttons_frame.pack(expand=True, fill="both", padx=10, pady=10)
+
+# --- Пункт 3: Создаем массив (матрицу) со знаками ---
+# Расположим кнопки в удобном порядке (как на клавиатуре)
+buttons_matrix = [
+    ["7", "8", "9", "/"],
+    ["4", "5", "6", "*"],
+    ["1", "2", "3", "-"],
+    ["0", ".", "=", "+"]
+]
+
+# --- Пункт 5: Функция-обработчик нажатий ---
+# Она принимает символ (char) и решает, что с ним делать
+def on_button_click(char):
+    global current_expression, final_result
+    
+    # Пункт 7: Используем единичные конструкции if-else
+    
+    if char == "=":
+        # Обрабатываем общее значение при нажатии "="
+        try:
+            # Вычисляем строку как математическое выражение
+            final_result = str(eval(current_expression))
+            # Очищаем текущее выражение, чтобы начать новое
+            current_expression = ""
+        except Exception:
+            # Если ошибка (например, деление на ноль или некорректный ввод)
+            final_result = "Ошибка"
+            current_expression = ""
+        
+        # Обновляем экран
+        text_input.config(text=final_result)
+        
+    elif char in ["+", "-", "*", "/"]:
+        # Добавляем оператор к выражению
+        # Если до этого была ошибка, начинаем заново
+        if final_result == "Ошибка":
+            final_result = "0"
+            current_expression = "0" + char
+        # Если выражение пустое, но есть сохраненный результат, берем его
+        elif current_expression == "":
+            current_expression = final_result + char
+        else:
+            current_expression += char
+            
+        # Показываем на экране, что ввели
+        text_input.config(text=current_expression)
+        
+    else:
+        # Ввод цифр и точки
+        if final_result == "Ошибка":
+            final_result = "0"
+            current_expression = char
+        else:
+            current_expression += char
+            
+        # Обновляем экран
+        text_input.config(text=current_expression)
+
+
+# --- Пункты 2 и 4: Создание интерфейса и кнопок через цикл for ---
+# Проходимся по матрице
+for row_index in range(len(buttons_matrix)):
+    for col_index in range(len(buttons_matrix[row_index])):
+        
+        button_text = buttons_matrix[row_index][col_index]
+        
+        # Создаем кнопку
+        btn = tk.Button(
+            buttons_frame, 
+            text=button_text, 
+            font=("Arial", 18),
+            bg="#f0f0f0" if button_text not in ["=", "+", "-", "*", "/"] else "#d0e0ff"
+        )
+        
+        # Пункт 4: задаем text= и command= через цикл
+        # Используем lambda для передачи конкретного символа в функцию
+        btn.config(command=lambda t=button_text: on_button_click(t))
+        
+        # Размещаем кнопку в сетке
+        btn.grid(row=row_index, column=col_index, sticky="nsew", padx=2, pady=2)
+
+# Настраиваем растяжение кнопок
+for i in range(4):
+    buttons_frame.rowconfigure(i, weight=1)
+    buttons_frame.columnconfigure(i, weight=1)
+
+# Запускаем главный цикл
+root.mainloop()
