@@ -1,0 +1,57 @@
+USE Academy;
+
+CREATE TABLE IF NOT EXISTS student_group (
+    id             INT AUTO_INCREMENT PRIMARY KEY,
+    name           VARCHAR(50)  NOT NULL,
+    course         TINYINT      NOT NULL,
+    specialty      VARCHAR(100) NOT NULL,
+    students_count INT          NOT NULL
+);
+
+DROP FUNCTION IF EXISTS fn_student_group_name;
+DROP PROCEDURE IF EXISTS ps_student_groups_insert;
+
+DELIMITER $$
+
+CREATE FUNCTION fn_student_group_name(p_course INT, p_index INT)
+RETURNS VARCHAR(50)
+NOT DETERMINISTIC
+NO SQL
+BEGIN
+    DECLARE v_prefix VARCHAR(10);
+
+    SET v_prefix = ELT(FLOOR(1 + RAND() * 4), 'SE', 'CS', 'IT', 'DS');
+
+    RETURN CONCAT(v_prefix, '-', p_course, LPAD(p_index, 2, '0'));
+END$$
+
+CREATE PROCEDURE ps_student_groups_insert(IN p_count INT)
+BEGIN
+    DECLARE i INT DEFAULT 1;
+    DECLARE v_course INT;
+    DECLARE v_specialty VARCHAR(100);
+
+    WHILE i <= p_count DO
+        SET v_course = FLOOR(1 + RAND() * 4);
+        SET v_specialty = ELT(FLOOR(1 + RAND() * 4),
+                              'Software Engineering',
+                              'Computer Science',
+                              'Information Technology',
+                              'Data Science');
+
+        INSERT INTO student_group (name, course, specialty, students_count)
+        VALUES (
+            fn_student_group_name(v_course, i),
+            v_course,
+            v_specialty,
+            FLOOR(15 + RAND() * 16)
+        );
+
+        SET i = i + 1;
+    END WHILE;
+END$$
+
+DELIMITER ;
+
+CALL ps_student_groups_insert(10);
+SELECT * FROM student_group;
