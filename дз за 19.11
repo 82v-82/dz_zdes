@@ -1,0 +1,107 @@
+        h2 { margin-top: 0; text-align: center; }
+        label { display: block; margin: 14px 0 6px; }
+        input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 11px;
+            border: 1px solid #4b5563;
+            border-radius: 6px;
+            background: #111827;
+            color: white;
+        }
+        button {
+            width: 100%;
+            margin-top: 18px;
+            padding: 11px;
+            border: 0;
+            border-radius: 6px;
+            background: #4f46e5;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover { background: #4338ca; }
+        .error {
+            padding: 10px;
+            color: #fecaca;
+            background: #7f1d1d;
+            border-radius: 6px;
+        }
+        .success {
+            padding: 10px;
+            color: #bbf7d0;
+            background: #14532d;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="form">
+        <h2>Flask + MySQL</h2>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        {% if success %}
+            <p class="success">{{ success }}</p>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('login') }}">
+            <label for="username">Имя пользователя</label>
+            <input id="username" type="text" name="username"
+                   placeholder="Введите логин" required>
+
+            <label for="password">Пароль</label>
+            <input id="password" type="password" name="password"
+                   placeholder="Введите пароль" required>
+
+            <button type="submit">Войти</button>
+        </form>
+    </div>
+</body>
+</html>
+"""
+
+
+@app.route("/", methods=["GET"])
+def index():
+    return redirect(url_for("login"))
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    error = None
+    success = None
+
+    if database_error:
+        error = (
+            "Не удалось подключиться к MySQL. "
+            "Проверьте настройки подключения в начале файла."
+        )
+    elif request.method == "POST":
+        try:
+            username = request.form.get("username", "").strip()
+            password = request.form.get("password", "")
+
+            if not username or not password:
+                error = "Заполните все поля!"
+            else:
+                user = db.get_user(username)
+
+                if user is not None and user["user_password"] == password:
+                    success = "Авторизация прошла успешно!"
+                else:
+                    error = "Неверное имя пользователя или пароль!"
+
+        except Exception:
+            error = "Ошибка при обращении к базе данных."
+
+    return render_template_string(
+        HTML_PAGE,
+        error=error,
+        success=success
+    )
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
