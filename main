@@ -1,0 +1,75 @@
+
+# Задание 1. Создать list из 10 чисел
+nums = list(range(10))
+
+# Вывести только чётные числа через comprehension
+even_nums = [x for x in nums if x % 2 == 0]
+
+print("Задание 1:")
+print("Все числа:", nums)
+print("Чётные числа:", even_nums)
+
+
+# Задание 2. Создать dict «товар = цена»
+user = {
+    "Телефон": 30000,
+    "Ноутбук": 60000,
+    "Наушники": 5000
+}
+
+# Обновить одну цену
+user["Телефон"] = 35000
+
+print("\nЗадание 2:")
+for key, value in user.items():
+    print(key, "=", value)
+
+
+# Задание 3. Создать set из списка с дублями
+tags = ["Python", "Java", "Python", "C++", "Java"]
+
+unique_tags = set(tags)
+
+print("\nЗадание 3:")
+print("Исходный список:", tags)
+print("Без дубликатов:", unique_tags)
+
+# Проверка вхождения элемента
+print("Python есть в множестве:", "Python" in unique_tags)
+
+
+# Задание 4. Создать tuple координат
+point = (10, 20)
+
+print("\nЗадание 4:")
+print("Координаты:", point)
+
+# Попытка изменить элемент tuple
+try:
+    point[0] = 50
+except TypeError:
+    print("Ошибка TypeError: tuple нельзя изменять")
+
+
+# Задание 5. Цикл и comprehension
+print("\nЗадание 5:")
+
+# Через обычный цикл
+squares1 = []
+for x in range(1, 6):
+    squares1.append(x ** 2)
+
+# Через comprehension
+squares2 = [x ** 2 for x in range(1, 6)]
+
+print("Через цикл:", squares1)
+print("Через comprehension:", squares2)
+
+
+# Проверка для сдачи
+assert isinstance(nums, list)
+assert isinstance(user, dict)
+assert isinstance(unique_tags, set)
+assert isinstance(point, tuple)
+
+print("\nOK")
